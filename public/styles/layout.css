@@ -1,0 +1,37 @@
+
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+nav * {
+    padding: 1em;
+}
+
+main * {
+    /* margin: 2em; */
+    padding: 1em;
+}
+
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    height: 50vh;
+    justify-content: space-around;
+}
+
+form > input, button {
+    /* padding: 1em; */
+}
+ 
+li {
+    border: 1px solid black;
+    border-radius: 1em;
+    background-color: whitesmoke;
+    margin: 1em;
+}
+
+
