@@ -1,8 +1,21 @@
-h1 { 
-  text-align: center;
+
+body {
+  background-color: lightgray;
+
 }
 
-body { 
-  background: rgb(129, 226, 255);
+nav {
+  background-color: black;
+  color: whitesmoke;
 }
 
+
+main h2 {
+  background-color: grey;
+  color: whitesmoke;
+
+}
+
+form fieldset {
+  background-color: burlywood;
+}
