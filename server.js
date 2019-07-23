@@ -41,7 +41,8 @@ app.post('/searches', (req, res) => {
   console.log(url);
   superagent.get(url)
     .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo)))
-    .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }));
+    .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
+    .catch(err => res.render('pages/error', { error: err }));
 
 });
 
