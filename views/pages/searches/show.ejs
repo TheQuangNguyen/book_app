@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Search Results</title>
+</head>
+
+<body>
+    <h1>Results of search</h1>
+    <ol>
+        <% searchResults.forEach(book =>{ %>
+        <li>
+            <img src=<%= book.coverImage %> alt="">
+            <h2> <%= book.title %> </h2>
+
+            <h3><%= book.authors.join(', ') %> </h3>
+            <p><%= book.summary %></p>
+        </li>
+        <% }) %>
+
+    </ol>
+</body>
+
+</html>
+
+<li>
+    <img src="" alt="">
+    <h2>title</h2>
+    <h3>authors</h3>
+    <p></p>
+</li>
