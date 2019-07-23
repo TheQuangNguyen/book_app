@@ -23,7 +23,7 @@ app.listen(PORT, () => {
 
 
 function Book(info) {
-  this.coverImage = info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') || 'https://i.imgur.com/J5LVHEL.jpg';
+  this.coverImage = info.volumeInfo.imageLinks ? info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://i.imgur.com/J5LVHEL.jpg';
   this.title = info.volumeInfo.title || 'Title not available';
   this.authors = info.volumeInfo.authors || ['Author not available'];
   this.summary = info.volumeInfo.description || 'Summary not available'
