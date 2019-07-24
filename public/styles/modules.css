@@ -1,0 +1,8 @@
+#addBookForm { 
+  position: fixed;
+  height: 90vh;
+  width: 93vw;
+  margin: auto;
+  background: black;
+  display: none;
+}

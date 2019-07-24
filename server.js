@@ -52,7 +52,7 @@ app.get('/', getHomePage);
 app.get('/search', getSearchPage);
 app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
-
+app.post('/book', handleBookAdd);
 
 
 // #region ---------- ROUTE HANDLERS
@@ -64,6 +64,9 @@ function getBookDetails(req, res) {
     .then(result => res.render('pages/books/show', { book: result.rows[0] }));
 }
 
+function handleBookAdd(req, res) { 
+  console.log(req.body);
+}
 
 function handleSearches(req, res) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
