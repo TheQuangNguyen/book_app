@@ -2,45 +2,28 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-
-  <script src="https://kit.fontawesome.com/6454e26792.js"></script>
-
-  <link rel="stylesheet" href="/styles/reset.css">
-  <link rel="stylesheet" href="/styles/base.css">
-  <link rel="stylesheet" href="/styles/layout.css">
-  <link rel="stylesheet" href="/styles/modules.css">
-  <link rel="stylesheet" href="/styles/icons.css">
+  <%- include ../layout/head %>
   <title>Book App</title>
 </head>
 
 <body>
 
   <header>
-    <% include partials/header %>
+    <%- include ../layout/header %>
   </header>
 
   <main>
 
-    <h2>Search by Title or Author</h2>
-    <form action="/searches" method="post">
-      <input type="text" name="search" placeholder="Enter a title or author" required>
-      <fieldset>
-        <label for="title">
-          <span>Title</span>
-          <input type="radio" name="search" value="title" required>
-        </label>
-      </fieldset>
-      <fieldset>
-        <label for="author">
-          <span>Author</span>
-          <input type="radio" name="search" value="author" required>
-        </label>
-      </fieldset>
-      <button type="submit">Search the Google Books API</button>
-    </form>
+    <h2> <%= totalBooks %> Saved Books</h2>
+    <ol>
+      <% collection.forEach(book =>{ %>
+      <li>
+        <%- include('./books/detail', {book: book}) %>
+        <a href='/book/<%= book.id%>'>View Details</a>
+      </li>
+      <% }) %>
+    </ol>
+
 
   </main>
 
