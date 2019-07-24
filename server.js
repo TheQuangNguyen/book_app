@@ -75,7 +75,8 @@ function getSearchPage(req, res) {
 
 function getHomePage(req, res) {
   getAllBooks().then(result => {
-    res.render('./pages/index', {collection: result.rows})});
+    res.render('./pages/index', {collection: result.rows, totalBooks: result.rows.length})
+  });
 }
 
 app.get('*', (req, res) => res.status(404).send('Error. This route does not exist!!!'));
