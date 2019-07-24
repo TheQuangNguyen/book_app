@@ -36,7 +36,7 @@ function Book(info, userShelf) {
   this.bookshelf = userShelf;
 }
 
-Book.prototype.saveToPSQL = function() { 
+Book.prototype.saveToPSQL = function () {
   const SQL = `
     INSERT INTO books
       (author, title, isbn, image_url, description, bookshelf)
@@ -51,10 +51,19 @@ Book.prototype.saveToPSQL = function() {
 app.get('/', getHomePage);
 app.get('/search', getSearchPage);
 app.post('/search', handleSearches);
+app.get('/book/:id', getBookDetails);
 
 
 
 // #region ---------- ROUTE HANDLERS
+
+function getBookDetails(req, res) {
+  const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
+  console.log(sql);
+  client.query(sql)
+    .then(result => res.render('pages/books/show', { book: result.rows[0] }));
+}
+
 
 function handleSearches(req, res) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
@@ -69,13 +78,13 @@ function handleSearches(req, res) {
     .catch(err => res.render('pages/error', { error: err }));
 }
 
-function getSearchPage(req, res) { 
+function getSearchPage(req, res) {
   res.render('pages/searches/new');
 }
 
 function getHomePage(req, res) {
   getAllBooks().then(result => {
-    res.render('./pages/index', {collection: result.rows, totalBooks: result.rows.length})
+    res.render('./pages/index', { collection: result.rows, totalBooks: result.rows.length })
   });
 }
 
@@ -86,7 +95,7 @@ app.get('*', (req, res) => res.status(404).send('Error. This route does not exis
 
 // #region HELPER FUNCTIONS
 
-function getAllBooks(option, value) { 
+function getAllBooks(option, value) {
   const SQL = `SELECT * FROM books`;
   return client.query(SQL);
 }

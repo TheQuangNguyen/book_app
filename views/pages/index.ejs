@@ -16,16 +16,12 @@
 
     <h2> <%= totalBooks %> Saved Books</h2>
     <ol>
-        <% collection.forEach(book =>{ %>
-        <li>
-            <img src=<%= book.image_url %> alt="">
-            <h2> <%= book.title %> </h2>
-            <h3>By: <%= book.author %> </h3>
-            <p><%= book.isbn %></p>
-            <p><%= book.bookshelf %></p>
-            <p><%= book.description %></p>
-        </li>
-        <% }) %>
+      <% collection.forEach(book =>{ %>
+      <li>
+        <%- include('./books/detail', {book: book}) %>
+        <a href='/book/<%= book.id%>'>View Details</a>
+      </li>
+      <% }) %>
     </ol>
 
 

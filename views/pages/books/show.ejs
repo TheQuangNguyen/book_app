@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ../../layout/head %>
+    <title>Book Details</title>
+</head>
+
+<body>
+    <header>
+        <%- include ../../layout/header %>
+    </header>
+    <main>
+        <ol>
+            <li>
+                <%- include('./detail', {book: book}) %>
+            </li>
+        </ol>
+    </main>
+
+</body>
+
+</html>
