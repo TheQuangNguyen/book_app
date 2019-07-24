@@ -24,6 +24,11 @@
 
     <main>
         <h2>Search Results</h2>
+
+        <form action="/book" method="POST">
+
+        </form>
+
         <ol>
             <% searchResults.forEach(book =>{ %>
             <li>
@@ -33,10 +38,9 @@
                 <p><%= book.isbn %></p>
                 <p><%= book.bookshelf %></p>
                 <p><%= book.description %></p>
-                <button action="/add">Select This Book</button>
+                <button class='select-book'>Select This Book</button>
             </li>
             <% }) %>
-
         </ol>
     </main>
 </body>
