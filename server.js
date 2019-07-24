@@ -23,6 +23,7 @@ app.listen(PORT, () => {
   console.log('Listening on PORT: ', PORT);
 })
 
+
 // #endregion SETUP
 
 
@@ -45,9 +46,17 @@ Book.prototype.saveToPSQL = function() {
 }
 
 
+// #region ---------- ROUTE 
+
+app.get('/', getHomePage);
+app.get('/search', getSearchPage);
+app.post('/search', handleSearches);
+
+
+
 // #region ---------- ROUTE HANDLERS
 
-app.post('/searches', (req, res) => {
+function handleSearches(req, res) {
   let url = 'https://www.googleapis.com/books/v1/volumes?q=';
   // check if title or author is selected
   let search = req.body.search[0].replace(/\s/g, '+');
@@ -58,12 +67,16 @@ app.post('/searches', (req, res) => {
     .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'test')))
     .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
     .catch(err => res.render('pages/error', { error: err }));
-});
+}
 
-app.get('/', (req, res) => {
-  getPSQLData().then(result => console.log(result.rows));
-  res.render('./pages/index');
-})
+function getSearchPage(req, res) { 
+  res.render('pages/searches/new');
+}
+
+function getHomePage(req, res) {
+  getAllBooks().then(result => {
+    res.render('./pages/index', {collection: result.rows})});
+}
 
 app.get('*', (req, res) => res.status(404).send('Error. This route does not exist!!!'));
 
@@ -72,8 +85,8 @@ app.get('*', (req, res) => res.status(404).send('Error. This route does not exis
 
 // #region HELPER FUNCTIONS
 
-function getPSQLData() { 
-  const SQL = "SELECT * FROM books;";
+function getAllBooks(option, value) { 
+  const SQL = `SELECT * FROM books`;
   return client.query(SQL);
 }
 
