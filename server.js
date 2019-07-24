@@ -7,6 +7,10 @@ const express = require('express');
 const app = express();
 const superagent = require('superagent');
 const PORT = process.env.PORT || 3000;
+require('dotenv').config();
+const pg = require('pg');
+const client = new pg.Client(process.env.DATABASE_URL);
+client.connect();
 
 app.set('view engine', 'ejs');
 
@@ -22,11 +26,22 @@ app.listen(PORT, () => {
 // #endregion SETUP
 
 
-function Book(info) {
-  this.coverImage = info.volumeInfo.imageLinks ? info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://i.imgur.com/J5LVHEL.jpg';
+function Book(info, userShelf) {
+  this.author = info.volumeInfo.authors || ['Author not available'];
   this.title = info.volumeInfo.title || 'Title not available';
-  this.authors = info.volumeInfo.authors || ['Author not available'];
-  this.summary = info.volumeInfo.description || 'Summary not available'
+  this.isbn = info.volumeInfo.industryIdentifiers[1] ? `${info.volumeInfo.industryIdentifiers[1].type} ${info.volumeInfo.industryIdentifiers[1].identifier}` : `${info.volumeInfo.industryIdentifiers[0].type} ${info.volumeInfo.industryIdentifiers[0].identifier}`;
+  this.image_url = info.volumeInfo.imageLinks ? info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://i.imgur.com/J5LVHEL.jpg';
+  this.description = info.volumeInfo.description || 'Description not available';
+  this.bookshelf = userShelf;
+}
+
+Book.prototype.saveToPSQL = function() { 
+  const SQL = `
+    INSERT INTO books
+      (author, title, isbn, image_url, description, bookshelf)
+      VALUES($1,$2,$3,$4,$5,$6);`;
+  const values = [this.author.join(', '), this.title, this.isbn, this.image_url, this.description, this.bookshelf];
+  client.query(SQL, values);
 }
 
 
@@ -40,18 +55,26 @@ app.post('/searches', (req, res) => {
   if (req.body.search[1] === 'author') { url += `+inauthor:${search}`; }
   console.log(url);
   superagent.get(url)
-    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo)))
+    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'test')))
     .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
     .catch(err => res.render('pages/error', { error: err }));
-
 });
 
 app.get('/', (req, res) => {
+  getPSQLData().then(result => console.log(result.rows));
   res.render('./pages/index');
 })
 
 app.get('*', (req, res) => res.status(404).send('Error. This route does not exist!!!'));
 
 // #endregion ROUTE HANDLERS
+
+
+// #region HELPER FUNCTIONS
+
+function getPSQLData() { 
+  const SQL = "SELECT * FROM books;";
+  return client.query(SQL);
+}
 
 

@@ -27,11 +27,12 @@
         <ol>
             <% searchResults.forEach(book =>{ %>
             <li>
-                <img src=<%= book.coverImage %> alt="">
+                <img src=<%= book.image_url %> alt="">
                 <h2> <%= book.title %> </h2>
-
-                <h3>By: <%= book.authors.join(', ') %> </h3>
-                <p><%= book.summary %></p>
+                <h3>By: <%= book.author.join(', ') %> </h3>
+                <p><%= book.isbn %></p>
+                <p><%= book.bookshelf %></p>
+                <p><%= book.description %></p>
             </li>
             <% }) %>
 
