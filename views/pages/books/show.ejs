@@ -11,20 +11,7 @@
         <%- include ../../layout/header %>
     </header>
 
-    <!-- <%- include('../books/edit', {method: 'PUT', id: book.id}) %> -->
-    <section>
-        <form action="/book/<%= book.id %>" method="POST" id="addBookForm">
-            <p class="closeWindow">X</p>
-            <input type=“hidden” name=“_method” value=“PUT”>
-            <input class='title' type="text" name="title">
-            <input class='author' type="text" name="author">
-            <input class='isbn' type="text" name="isbn">
-            <input class="image_url" type="text" name="image_url">
-            <textarea class='description' cols="30" rows="15" name="description"></textarea>
-            <input class='bookshelf' type="text" placeholder="Enter a Bookshelf Name" name="bookshelf" required>
-            <button type='submit'>Add To Database</button>
-        </form>
-    </section>
+    <%- include('../books/edit', {method: 'PUT', id: book.id}) %>
 
     <main>
         <div class="book">

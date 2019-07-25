@@ -25,7 +25,6 @@ app.use(methodOverride((request, response) => {
   }
 }))
 
-
 app.listen(PORT, () => {
   console.log('Listening on PORT: ', PORT);
 })
@@ -95,7 +94,7 @@ function handleSearches(req, res) {
   if (req.body.search[1] === 'author') { url += `+inauthor:${search}`; }
   console.log(url);
   superagent.get(url)
-    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'test')))
+    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'Enter bookshelf')))
     .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
     .catch(err => errorHandling(err, res));
 }

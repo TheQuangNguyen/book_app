@@ -11,9 +11,10 @@ function addBookHandler(event) {
   const isbn = $(event.target).siblings('.isbn').text();
   const description = $(event.target).siblings('.description').text();
   const image_url = $(event.target).siblings('.image_url').attr('src');
+  const bookshelf = $(event.target).siblings('.bookshelf').text();
 
-  const formArray = [title, author, isbn, image_url];
-  const nameArray = ['title', 'author', 'isbn','image_url'];
+  const formArray = [title, author, isbn, image_url, bookshelf];
+  const nameArray = ['title', 'author', 'isbn','image_url', 'bookshelf'];
   // console.log($('#addBookForm').children()[0]);
   for (let i = 0; i < formArray.length; i++) {
     $('#addBookForm').children(`.${nameArray[i]}`).attr('value', `${formArray[i]}`);
