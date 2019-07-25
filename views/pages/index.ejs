@@ -14,16 +14,13 @@
 
   <main>
 
-    <h2> <%= totalBooks %> Saved Books</h2>
-    <ol>
+    <h2> <%= totalBooks %> Saved Books</h2>\
       <% collection.forEach(book =>{ %>
-      <li>
+      <div class="book">
         <%- include('./books/detail', {book: book}) %>
         <a href='/book/<%= book.id%>'>View Details</a>
-      </li>
+      </div>
       <% }) %>
-    </ol>
-
 
   </main>
 </body>

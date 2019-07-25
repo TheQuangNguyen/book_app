@@ -6,6 +6,7 @@
 const express = require('express');
 const app = express();
 const superagent = require('superagent');
+const methodOverride = require('method-override');
 const PORT = process.env.PORT || 3000;
 require('dotenv').config();
 const pg = require('pg');
@@ -16,7 +17,13 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-
+app.use(methodOverride((request, response) => {
+  if (request.body && typeof request.body === 'object' && '_method' in request.body) {
+    let method = request.body._method;
+    delete request.body._method;
+    return method;
+  }
+}))
 
 
 app.listen(PORT, () => {
@@ -28,7 +35,7 @@ app.listen(PORT, () => {
 
 
 function Book(info, userShelf) {
-  this.author = info.volumeInfo.authors || ['Author not available'];
+  this.author = info.volumeInfo.authors ? info.volumeInfo.authors.join(', ') : 'Author not available';
   this.title = info.volumeInfo.title || 'Title not available';
   this.isbn = info.volumeInfo.industryIdentifiers[1] ? `${info.volumeInfo.industryIdentifiers[1].type} ${info.volumeInfo.industryIdentifiers[1].identifier}` : `${info.volumeInfo.industryIdentifiers[0].type} ${info.volumeInfo.industryIdentifiers[0].identifier}`;
   this.image_url = info.volumeInfo.imageLinks ? info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://i.imgur.com/J5LVHEL.jpg';
@@ -57,6 +64,7 @@ app.get('/search', getSearchPage);
 app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
 app.post('/book', handleBookAdd);
+app.put('/book/:id')
 
 
 // #region ---------- ROUTE HANDLERS

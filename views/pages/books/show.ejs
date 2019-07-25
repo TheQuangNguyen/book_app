@@ -10,13 +10,19 @@
     <header>
         <%- include ../../layout/header %>
     </header>
+
+    <%- include('../books/edit', {method: 'PUT'}) %>
+
     <main>
-        <ol>
-            <li>
-                <%- include('./detail', {book: book}) %>
-            </li>
-        </ol>
+        <div class="book">
+            <%- include('./detail', {book: book}) %>
+            <button class='select-book'>Update Details</button>
+        </div>
     </main>
+
+    <footer>
+            <%- include ../../layout/footer %>
+    </footer>
 
 </body>
 
