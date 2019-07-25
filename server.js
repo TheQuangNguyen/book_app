@@ -18,6 +18,7 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride((request, response) => {
+  // console.log('using method override on: ', request.body);
   if (request.body && typeof request.body === 'object' && '_method' in request.body) {
     let method = request.body._method;
     delete request.body._method;
@@ -43,16 +44,16 @@ function Book(info, userShelf) {
   this.bookshelf = userShelf;
 }
 
-Book.saveToPSQL = function(object) {
-  console.log('object', (object));
+Book.saveToPSQL = function (object) {
+  // console.log('Save this Book to DataBase', (object));
   let { title, author, isbn, image_url, description, bookshelf } = object;
   const SQL = 'INSERT INTO books (author, title, isbn, image_url, description, bookshelf) VALUES($1,$2,$3,$4,$5,$6);';
   const values = [author, title, isbn, image_url, description, bookshelf];
   return client.query(SQL, values);
 }
 
-Book.getFromPSQLUsingISBN = function(isbn) { 
-  const SQL = 'SELECT * FROM books where isbn = $1;';  
+Book.getFromPSQLUsingISBN = function (isbn) {
+  const SQL = 'SELECT * FROM books where isbn = $1;';
   return client.query(SQL, [isbn]);
 }
 
@@ -76,11 +77,19 @@ function getBookDetails(req, res) {
     .catch(err => errorHandling(err, res));
 }
 
-function handleBookUpdate(req, res) { 
-  console.log(req.body);
+function handleBookUpdate(req, res) {
+  console.log('handleBookUpdate for :', req.body);
+  let { title, author, isbn, image_url, description, bookshelf } = req.body;
+  let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7`;
+  let values = [title, author, isbn, image_url, description, bookshelf, req.params.id];
+  return client.query(SQL, values)
+    .then(results => {
+      res.redirect('/');
+    })
+    .catch(err => errorHandling(err, res));
 }
 
-function handleBookAdd(req, res) { 
+function handleBookAdd(req, res) {
   Book.saveToPSQL(req.body)
     .then(result => Book.getFromPSQLUsingISBN(req.body.isbn))
     .then(result => res.render('pages/books/show', { book: result.rows[0] }))

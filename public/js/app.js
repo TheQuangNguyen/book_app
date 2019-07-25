@@ -3,7 +3,6 @@ console.log('got in js');
 
 function addBookHandler(event) {
   $('#addBookForm').show().fadeIn(500);
-  $('input[name="_method"]').attr('value','test');
   $('.dark').show().fadeIn(500);
   $('.closeWindow').click(closeWindow);
   const title = $(event.target).siblings('.title').text();
@@ -13,7 +12,7 @@ function addBookHandler(event) {
   const image_url = $(event.target).siblings('.image_url').attr('src');
 
   const formArray = [title, author, isbn, image_url];
-  const nameArray = ['title', 'author', 'isbn','image_url'];
+  const nameArray = ['title', 'author', 'isbn', 'image_url'];
   // console.log($('#addBookForm').children()[0]);
   for (let i = 0; i < formArray.length; i++) {
     $('#addBookForm').children(`.${nameArray[i]}`).attr('value', `${formArray[i]}`);
@@ -21,7 +20,7 @@ function addBookHandler(event) {
   $('#addBookForm').children(`.description`).text(`${description}`);
 }
 
-function closeWindow() { 
+function closeWindow() {
   $('#addBookForm').hide().fadeOut(500);
   $('.dark').hide().fadeOut(500);
 }

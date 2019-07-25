@@ -11,8 +11,8 @@
         <%- include ../../layout/header %>
     </header>
 
-    <!-- <%- include('../books/edit', {method: 'PUT', id: book.id}) %> -->
-    <section>
+    <%- include('../books/edit', {method: 'PUT', id: book.id}) %>
+    <!-- <section>
         <form action="/book/<%= book.id %>" method="POST" id="addBookForm">
             <p class="closeWindow">X</p>
             <input type=“hidden” name=“_method” value=“PUT”>
@@ -24,7 +24,7 @@
             <input class='bookshelf' type="text" placeholder="Enter a Bookshelf Name" name="bookshelf" required>
             <button type='submit'>Add To Database</button>
         </form>
-    </section>
+    </section> -->
 
     <main>
         <div class="book">
@@ -34,7 +34,7 @@
     </main>
 
     <footer>
-            <%- include ../../layout/footer %>
+        <%- include ../../layout/footer %>
     </footer>
 
 </body>
