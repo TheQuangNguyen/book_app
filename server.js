@@ -64,17 +64,20 @@ app.get('/search', getSearchPage);
 app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
 app.post('/book', handleBookAdd);
-app.put('/book/:id')
+app.put('/book/:id', handleBookUpdate);
 
 
 // #region ---------- ROUTE HANDLERS
 
 function getBookDetails(req, res) {
   const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
-  console.log(sql);
   client.query(sql)
     .then(result => res.render('pages/books/show', { book: result.rows[0] }))
     .catch(err => errorHandling(err, res));
+}
+
+function handleBookUpdate(req, res) { 
+  console.log(req.body);
 }
 
 function handleBookAdd(req, res) { 
