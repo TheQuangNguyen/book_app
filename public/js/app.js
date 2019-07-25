@@ -2,7 +2,9 @@
 console.log('got in js');
 
 function addBookHandler(event) {
-  $('#addBookForm').show();
+  $('#addBookForm').show().fadeIn(500);
+  $('.dark').show().fadeIn(500);
+  $('.closeWindow').click(closeWindow);
   const title = $(event.target).siblings('.title').text();
   const author = $(event.target).siblings('.author').text();
   const isbn = $(event.target).siblings('.isbn').text();
@@ -18,6 +20,10 @@ function addBookHandler(event) {
   $('#addBookForm').children(`.description`).text(`${description}`);
 }
 
+function closeWindow() { 
+  $('#addBookForm').hide().fadeOut(500);
+  $('.dark').hide().fadeOut(500);
+}
 
 $('button[class="select-book"]').click(event, addBookHandler);
 

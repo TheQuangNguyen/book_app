@@ -1,8 +1,29 @@
 #addBookForm { 
   position: fixed;
   height: 90vh;
-  width: 93vw;
-  margin: auto;
-  background: black;
+  width: 90vw;
+  background: #222;
   display: none;
+  z-index: 100;
+  padding: 1rem;
+}
+
+section { 
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.dark { 
+  display: none;
+  position: fixed;
+  z-index: 2;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+}
+
+.closeWindow { 
+  color: white;
+  align-self: flex-end;
 }

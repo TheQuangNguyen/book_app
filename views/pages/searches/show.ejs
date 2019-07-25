@@ -18,14 +18,14 @@
 </head>
 
 <body>
+    <div class="dark"></div>
     <header>
         <% include ../../layout/header %>
     </header>
 
-    <main>
-        <h2>Search Results</h2>
-
+    <section>
         <form action="/book" method="POST" id="addBookForm">
+            <p class="closeWindow">X</p>
             <input class='title' type="text" name="addBook" value="title">
             <input class='author' type="text" name="addBook" value="author">
             <input class='isbn' type="text" name="addBook" value="isbn">
@@ -34,6 +34,9 @@
             <input class='bookshelf' type="text" placeholder="Enter a Bookshelf Name" name="addBook" value="bookshelf" required>
             <button type='submit'>Add To Database</button>
         </form>
+    </section>
+    <main>
+        <h2>Search Results</h2>
 
         <ol>
             <% searchResults.forEach((book,index) =>{ %>
