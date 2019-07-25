@@ -36,13 +36,17 @@ function Book(info, userShelf) {
   this.bookshelf = userShelf;
 }
 
-Book.prototype.saveToPSQL = function () {
-  const SQL = `
-    INSERT INTO books
-      (author, title, isbn, image_url, description, bookshelf)
-      VALUES($1,$2,$3,$4,$5,$6);`;
-  const values = [this.author.join(', '), this.title, this.isbn, this.image_url, this.description, this.bookshelf];
-  client.query(SQL, values);
+Book.saveToPSQL = function(object) {
+  console.log('object', (object));
+  let { title, author, isbn, image_url, description, bookshelf } = object;
+  const SQL = 'INSERT INTO books (author, title, isbn, image_url, description, bookshelf) VALUES($1,$2,$3,$4,$5,$6);';
+  const values = [author, title, isbn, image_url, description, bookshelf];
+  return client.query(SQL, values);
+}
+
+Book.getFromPSQLUsingISBN = function(isbn) { 
+  const SQL = 'SELECT * FROM books where isbn = $1;';  
+  return client.query(SQL, [isbn]);
 }
 
 
@@ -61,11 +65,15 @@ function getBookDetails(req, res) {
   const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
   console.log(sql);
   client.query(sql)
-    .then(result => res.render('pages/books/show', { book: result.rows[0] }));
+    .then(result => res.render('pages/books/show', { book: result.rows[0] }))
+    .catch(err => errorHandling(err, res));
 }
 
 function handleBookAdd(req, res) { 
-  console.log(req.body);
+  Book.saveToPSQL(req.body)
+    .then(result => Book.getFromPSQLUsingISBN(req.body.isbn))
+    .then(result => res.render('pages/books/show', { book: result.rows[0] }))
+    .catch(err => errorHandling(err, res));
 }
 
 function handleSearches(req, res) {
@@ -78,7 +86,7 @@ function handleSearches(req, res) {
   superagent.get(url)
     .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'test')))
     .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
-    .catch(err => res.render('pages/error', { error: err }));
+    .catch(err => errorHandling(err, res));
 }
 
 function getSearchPage(req, res) {
@@ -101,6 +109,10 @@ app.get('*', (req, res) => res.status(404).send('Error. This route does not exis
 function getAllBooks(option, value) {
   const SQL = `SELECT * FROM books`;
   return client.query(SQL);
+}
+
+function errorHandling(err, res) {
+  res.render('pages/error', { error: err });
 }
 
 
