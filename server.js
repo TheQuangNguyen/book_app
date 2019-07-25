@@ -76,7 +76,14 @@ function getBookDetails(req, res) {
 }
 
 function handleBookUpdate(req, res) { 
-  console.log(req.body);
+  let { title, author, isbn, image_url, description, bookshelf } = req.body;
+  let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7`;
+  let values = [title, author, isbn, image_url, description, bookshelf, req.params.id];
+  return client.query(SQL, values)
+    .then(results => {
+      res.redirect('/');
+    })
+    .catch(err => errorHandling(err, res));
 }
 
 function handleBookAdd(req, res) { 

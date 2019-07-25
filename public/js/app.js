@@ -3,7 +3,6 @@ console.log('got in js');
 
 function addBookHandler(event) {
   $('#addBookForm').show().fadeIn(500);
-  $('input[name="_method"]').attr('value','test');
   $('.dark').show().fadeIn(500);
   $('.closeWindow').click(closeWindow);
   const title = $(event.target).siblings('.title').text();
