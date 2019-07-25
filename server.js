@@ -6,6 +6,7 @@
 const express = require('express');
 const app = express();
 const superagent = require('superagent');
+const methodOverride = require('method-override');
 const PORT = process.env.PORT || 3000;
 require('dotenv').config();
 const pg = require('pg');
@@ -16,8 +17,13 @@ app.set('view engine', 'ejs');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
-
-
+app.use(methodOverride((request, response) => {
+  if (request.body && typeof request.body === 'object' && '_method' in request.body) {
+    let method = request.body._method;
+    delete request.body._method;
+    return method;
+  }
+}))
 
 app.listen(PORT, () => {
   console.log('Listening on PORT: ', PORT);
@@ -28,7 +34,7 @@ app.listen(PORT, () => {
 
 
 function Book(info, userShelf) {
-  this.author = info.volumeInfo.authors || ['Author not available'];
+  this.author = info.volumeInfo.authors ? info.volumeInfo.authors.join(', ') : 'Author not available';
   this.title = info.volumeInfo.title || 'Title not available';
   this.isbn = info.volumeInfo.industryIdentifiers[1] ? `${info.volumeInfo.industryIdentifiers[1].type} ${info.volumeInfo.industryIdentifiers[1].identifier}` : `${info.volumeInfo.industryIdentifiers[0].type} ${info.volumeInfo.industryIdentifiers[0].identifier}`;
   this.image_url = info.volumeInfo.imageLinks ? info.volumeInfo.imageLinks.thumbnail.replace(/^http:\/\//i, 'https://') : 'https://i.imgur.com/J5LVHEL.jpg';
@@ -57,15 +63,26 @@ app.get('/search', getSearchPage);
 app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
 app.post('/book', handleBookAdd);
+app.put('/book/:id', handleBookUpdate);
 
 
 // #region ---------- ROUTE HANDLERS
 
 function getBookDetails(req, res) {
   const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
-  console.log(sql);
   client.query(sql)
     .then(result => res.render('pages/books/show', { book: result.rows[0] }))
+    .catch(err => errorHandling(err, res));
+}
+
+function handleBookUpdate(req, res) { 
+  let { title, author, isbn, image_url, description, bookshelf } = req.body;
+  let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7`;
+  let values = [title, author, isbn, image_url, description, bookshelf, req.params.id];
+  return client.query(SQL, values)
+    .then(results => {
+      res.redirect('/');
+    })
     .catch(err => errorHandling(err, res));
 }
 
@@ -84,7 +101,7 @@ function handleSearches(req, res) {
   if (req.body.search[1] === 'author') { url += `+inauthor:${search}`; }
   console.log(url);
   superagent.get(url)
-    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'test')))
+    .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'Enter bookshelf')))
     .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
     .catch(err => errorHandling(err, res));
 }

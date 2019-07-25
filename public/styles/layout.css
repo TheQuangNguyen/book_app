@@ -27,7 +27,7 @@ form > input, button {
     padding: 1em;
 }
  
-li {
+.book {
     border: 1px solid black;
     border-radius: 1em;
     background-color: whitesmoke;
