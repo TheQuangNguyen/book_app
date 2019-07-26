@@ -1,9 +1,9 @@
 <section>
-    <% if(method === 'PUT') { %>
-      <form action="/book/<%= id %>" method="POST" id="addBookForm">
+  <% if(method === 'PUT') { %>
+  <form action="/book/<%= id %>" method="POST" id="addBookForm">
     <% } else { %>
-      <form action="/book" method="POST" id="addBookForm">
-    <% } %>
+    <form action="/book" method="POST" id="addBookForm">
+      <% } %>
       <p class="closeWindow">X</p>
       <% if(method === 'PUT') { %>
       <input type='hidden' name='_method' value='PUT'>
@@ -14,6 +14,11 @@
       <input class="image_url" type="text" name="image_url">
       <textarea class='description' cols="30" rows="15" name="description"></textarea>
       <input class='bookshelf' type="text" name="bookshelf" required>
+      <select>
+        <% bookshelves.forEach(shelf =>{ %>
+        <option value="<% shelf %>"> <%= shelf %> </option>
+        <% }) %>
+      </select>
       <button type='submit'>Add To Database</button>
     </form>
 </section>

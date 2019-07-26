@@ -1,6 +1,6 @@
 'use strict';
 
-// #region ---------- SETUP
+// #region ---------- SETUP ----------
 
 
 const express = require('express');
@@ -32,6 +32,7 @@ app.listen(PORT, () => {
 
 // #endregion SETUP
 
+// #region ---------- BOOK ----------
 
 function Book(info, userShelf) {
   this.author = info.volumeInfo.authors ? info.volumeInfo.authors.join(', ') : 'Author not available';
@@ -42,7 +43,7 @@ function Book(info, userShelf) {
   this.bookshelf = userShelf;
 }
 
-Book.saveToPSQL = function(object) {
+Book.saveToPSQL = function (object) {
   console.log('object', (object));
   let { title, author, isbn, image_url, description, bookshelf } = object;
   const SQL = 'INSERT INTO books (author, title, isbn, image_url, description, bookshelf) VALUES($1,$2,$3,$4,$5,$6);';
@@ -50,13 +51,21 @@ Book.saveToPSQL = function(object) {
   return client.query(SQL, values);
 }
 
-Book.getFromPSQLUsingISBN = function(isbn) { 
-  const SQL = 'SELECT * FROM books where isbn = $1;';  
+Book.getFromPSQLUsingISBN = function (isbn) {
+  const SQL = 'SELECT * FROM books where isbn = $1;';
   return client.query(SQL, [isbn]);
 }
 
+Book.render = function (req, res, book) {
+  getAllBookshelves(res)
+    .then(result => {
+      res.render('pages/books/show', { book: book, bookshelves: result })
+    });
+}
 
-// #region ---------- ROUTE 
+// #endregion SETUP
+
+// #region ---------- ROUTES ----------
 
 app.get('/', getHomePage);
 app.get('/search', getSearchPage);
@@ -66,16 +75,21 @@ app.post('/book', handleBookAdd);
 app.put('/book/:id', handleBookUpdate);
 
 
-// #region ---------- ROUTE HANDLERS
+// #endregion ROUTES
+
+
+// #region ---------- ROUTE HANDLERS ----------
+
 
 function getBookDetails(req, res) {
   const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
+
   client.query(sql)
-    .then(result => res.render('pages/books/show', { book: result.rows[0] }))
+    .then(result => Book.render(req, res, result.rows[0]))
     .catch(err => errorHandling(err, res));
 }
 
-function handleBookUpdate(req, res) { 
+function handleBookUpdate(req, res) {
   let { title, author, isbn, image_url, description, bookshelf } = req.body;
   let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7`;
   let values = [title, author, isbn, image_url, description, bookshelf, req.params.id];
@@ -86,10 +100,10 @@ function handleBookUpdate(req, res) {
     .catch(err => errorHandling(err, res));
 }
 
-function handleBookAdd(req, res) { 
+function handleBookAdd(req, res) {
   Book.saveToPSQL(req.body)
     .then(result => Book.getFromPSQLUsingISBN(req.body.isbn))
-    .then(result => res.render('pages/books/show', { book: result.rows[0] }))
+    .then(result => Book.render(req, res, result.rows[0]))
     .catch(err => errorHandling(err, res));
 }
 
@@ -99,11 +113,17 @@ function handleSearches(req, res) {
   let search = req.body.search[0].replace(/\s/g, '+');
   if (req.body.search[1] === 'title') { url += `+intitle:${search}`; }
   if (req.body.search[1] === 'author') { url += `+inauthor:${search}`; }
-  console.log(url);
+
   superagent.get(url)
     .then(result => result.body.items.slice(0, 10).map(bookInfo => new Book(bookInfo, 'Enter bookshelf')))
-    .then(bookArr => res.render('pages/searches/show', { searchResults: bookArr }))
-    .catch(err => errorHandling(err, res));
+    .then(bookArr => {
+      getAllBookshelves(res)
+        .then(shelves => {
+          return { searchResults: bookArr, bookshelves: shelves }
+        })
+        .then(result => res.render('pages/searches/show', result))
+        .catch(err => errorHandling(err, res));
+    });
 }
 
 function getSearchPage(req, res) {
@@ -121,7 +141,14 @@ app.get('*', (req, res) => res.status(404).send('Error. This route does not exis
 // #endregion ROUTE HANDLERS
 
 
-// #region HELPER FUNCTIONS
+// #region ---------- HELPER FUNCTIONS ----------
+
+function getAllBookshelves(res) {
+  let SQL = 'SELECT bookshelf FROM books ORDER BY bookshelf ASC';
+  return client.query(SQL)
+    .then(results => results.rows.map(b => b.bookshelf))
+    .catch(err => errorHandling(err, res));
+}
 
 function getAllBooks(option, value) {
   const SQL = `SELECT * FROM books`;
@@ -132,4 +159,5 @@ function errorHandling(err, res) {
   res.render('pages/error', { error: err });
 }
 
+// #endregion  HELPER FUNCTIONS 
 
