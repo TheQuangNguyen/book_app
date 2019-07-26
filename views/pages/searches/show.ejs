@@ -23,24 +23,18 @@
         <%- include ../../layout/header %>
     </header>
 
-    <%- include('../books/edit', {method: 'POST'}) %>
+    <%- include('../books/edit', {method: 'POST', bookshelves: bookshelves}) %>
 
     <main>
         <h2>Search Results</h2>
 
-            <% searchResults.forEach((book,index) =>{ %>
+        <% searchResults.forEach((book,index) =>{ %>
 
-            <div class="book">
-                <!-- <img class="image_url" src=<%= book.image_url %> alt="">
-                <h2 class='title'><%= book.title %> </h2>
-                <h3 class='author'>By: <%= book.author %> </h3>
-                <p class='isbn'><%= book.isbn %></p>
-                <p class='bookshelf'><%= book.bookshelf %></p>
-                <p class='description'><%= book.description %></p> -->
-                <%- include ../books/detail %>
-                <button class='select-book'>Select This Book</button>
-            </div>
-            <% }) %>
+        <div class="book">
+            <%- include ../books/detail %>
+            <button class='select-book'>Select This Book</button>
+        </div>
+        <% }) %>
 
     </main>
 
