@@ -1,21 +1,8 @@
-<!-- <div id='book'>
-    <img src=<%= book.image_url %> alt="">
-    <h2> <%= book.title %> </h2>
-    <h3>By: <%= book.author %> </h3>
-    <p><%= book.isbn %></p>
-    <% if(book.bookshelf) { %>
-    <p><%= book.bookshelf %></p>
-    <% } %>
-    <p><%= book.description %></p>
-    <button class="select-book">Update Details</button> -->
-<!-- </div> -->
-
-
-    <img class="image_url" src=<%= book.image_url %> alt="">
-    <h2 class='title'><%= book.title %> </h2>
-    <h3 class='author'><%= book.author %> </h3>
-    <p class='isbn'><%= book.isbn %></p>
-    <% if(book.bookshelf) { %>
-    <p class='bookshelf'><%= book.bookshelf %></p>
-    <% } %>
-    <p class='description'><%= book.description %></p>
+<img class="image_url" src=<%= book.image_url %> alt="">
+<h2 class='title' data-id="<%= book.id %>"><%= book.title %> </h2>
+<h3 class='author'><%= book.author %> </h3>
+<p class='isbn'><%= book.isbn %></p>
+<% if(book.bookshelf) { %>
+<p class='bookshelf'><%= book.bookshelf %></p>
+<% } %>
+<p class='description'><%= book.description %></p>

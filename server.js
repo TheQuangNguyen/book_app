@@ -73,12 +73,22 @@ app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
 app.post('/book', handleBookAdd);
 app.put('/book/:id', handleBookUpdate);
+app.delete('/book/:id', handleBookDelete);
 
 
 // #endregion ROUTES
 
 
 // #region ---------- ROUTE HANDLERS ----------
+
+
+function handleBookDelete(req, res) {
+  console.log('delete this id: ', req.params)
+  const SQL = 'DELETE FROM books WHERE id=$1'
+  client.query(SQL, [req.params.id])
+    .then(result => res.send('happy'));
+}
+
 
 
 function getBookDetails(req, res) {

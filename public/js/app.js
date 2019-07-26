@@ -13,7 +13,7 @@ function addBookHandler(event) {
   const bookshelf = $(event.target).siblings('.bookshelf').text();
 
   const formArray = [title, author, isbn, image_url, bookshelf];
-  const nameArray = ['title', 'author', 'isbn','image_url', 'bookshelf'];
+  const nameArray = ['title', 'author', 'isbn', 'image_url', 'bookshelf'];
   // console.log($('#addBookForm').children()[0]);
   for (let i = 0; i < formArray.length; i++) {
     $('#addBookForm').children(`.${nameArray[i]}`).attr('value', `${formArray[i]}`);
@@ -21,12 +21,22 @@ function addBookHandler(event) {
   $('#addBookForm').children(`.description`).text(`${description}`);
 }
 
-function closeWindow() { 
+function deleteBookHandler(event) {
+  const id = $(event.target).siblings('.title').data('id');
+  $.ajax({
+    url: `/book/${id}`,
+    type: 'DELETE',
+    success: function (result) { window.location.href = "/" }
+  })
+}
+
+function closeWindow() {
   $('#addBookForm').hide().fadeOut(500);
   $('.dark').hide().fadeOut(500);
 }
 
 $('button[class="select-book"]').click(event, addBookHandler);
+$('button[class="delete-book"]').click(event, deleteBookHandler);
 
 
 
