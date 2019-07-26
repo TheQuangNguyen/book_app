@@ -42,7 +42,7 @@ function Book(info, userShelf) {
   this.bookshelf = userShelf;
 }
 
-Book.saveToPSQL = function(object) {
+Book.saveToPSQL = function (object) {
   console.log('object', (object));
   let { title, author, isbn, image_url, description, bookshelf } = object;
   const SQL = 'INSERT INTO books (author, title, isbn, image_url, description, bookshelf) VALUES($1,$2,$3,$4,$5,$6);';
@@ -50,8 +50,8 @@ Book.saveToPSQL = function(object) {
   return client.query(SQL, values);
 }
 
-Book.getFromPSQLUsingISBN = function(isbn) { 
-  const SQL = 'SELECT * FROM books where isbn = $1;';  
+Book.getFromPSQLUsingISBN = function (isbn) {
+  const SQL = 'SELECT * FROM books where isbn = $1;';
   return client.query(SQL, [isbn]);
 }
 
@@ -64,9 +64,19 @@ app.post('/search', handleSearches);
 app.get('/book/:id', getBookDetails);
 app.post('/book', handleBookAdd);
 app.put('/book/:id', handleBookUpdate);
+app.delete('/book/:id', handleBookDelete);
 
 
 // #region ---------- ROUTE HANDLERS
+
+function handleBookDelete(req, res) {
+  console.log('delete this id: ', req.params)
+  const SQL = 'DELETE FROM books WHERE id=$1'
+  client.query(SQL, [req.params.id])
+    .then(result => res.send('happy'));
+}
+
+
 
 function getBookDetails(req, res) {
   const sql = `SELECT * FROM books WHERE id=${req.params.id};`;
@@ -75,7 +85,7 @@ function getBookDetails(req, res) {
     .catch(err => errorHandling(err, res));
 }
 
-function handleBookUpdate(req, res) { 
+function handleBookUpdate(req, res) {
   let { title, author, isbn, image_url, description, bookshelf } = req.body;
   let SQL = `UPDATE books SET title=$1, author=$2, isbn=$3, image_url=$4, description=$5, bookshelf=$6 WHERE id=$7`;
   let values = [title, author, isbn, image_url, description, bookshelf, req.params.id];
@@ -86,7 +96,7 @@ function handleBookUpdate(req, res) {
     .catch(err => errorHandling(err, res));
 }
 
-function handleBookAdd(req, res) { 
+function handleBookAdd(req, res) {
   Book.saveToPSQL(req.body)
     .then(result => Book.getFromPSQLUsingISBN(req.body.isbn))
     .then(result => res.render('pages/books/show', { book: result.rows[0] }))
